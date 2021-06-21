@@ -402,3 +402,82 @@ class Solution {
         return ans;
     }
 ```
+## 四、二维前缀和
+
+### 1、二维区域和检索 - 矩阵不可变
+
+模板题目
+
+https://leetcode-cn.com/problems/range-sum-query-2d-immutable/
+
+```
+class NumMatrix {
+
+    public int[][] sum;
+
+    public NumMatrix(int[][] matrix) {
+        sum = new int[matrix.length][matrix[0].length];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                sum[i][j] = getSum(i -1, j) + getSum(i, j - 1) - getSum(i - 1, j -1) + matrix[i][j];
+            }
+        }
+    }
+    
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        return getSum(row2, col2) - getSum(row1 - 1, col2) - getSum(row2, col1 - 1) + getSum(row1 - 1, col1 - 1);
+    }
+
+    private int getSum(int row, int col) {
+        if (row >= 0 && col >= 0) {
+            return sum[row][col];
+        }
+        return 0;
+    }
+}
+```
+
+ 
+
+## 五、差分
+
+### 1、航班预定统计
+
+模板题目
+
+https://leetcode-cn.com/problems/corporate-flight-bookings/submissions/
+
+
+
+```
+思路：
+(1) 计算差分。快捷方式：l至r加某一个数d,等价于l 加上d,r+1 减去d
+(2) 差分 然后 计算差分数组的前缀和 等于原数组
+class Solution {
+    public int[] corpFlightBookings(int[][] bookings, int n) {
+        // 多开2 是因为 航班从1开始，为了方便计算后移以为；last + 1需要多一位
+        int[] diff = new int[n + 2]; 
+        for (int i = 0; i< bookings.length; i++) {
+            int first = bookings[i][0];
+            int last = bookings[i][1];
+            int seats = bookings[i][2];
+            diff[first] += seats;
+            diff[last + 1] -= seats;
+        }
+        
+        // 只+1是为了多开一位方便计算
+        int[] sum = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            sum[i] = sum[i - 1] + diff[i];
+        }
+        
+        // 这一步是为了数组整体向前移动一位
+        int[] ans = new int[n];
+        for (int i = 1; i <= n; i++) {
+            ans[i - 1] = sum[i];
+        }
+        return ans;
+    }
+}
+```
+
