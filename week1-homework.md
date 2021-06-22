@@ -300,6 +300,46 @@ public static int numberOfSubarrays(int[] nums, int k) {
         return countNumberOfSubarray;
     }
 ```
+正确暴力需要三重循环。
+
+```
+          for (int i = 0; i < fluctuationArray.Length; i++)
+            {   
+                // 固定左边
+                for (int j = i; j < fluctuationArray.Length; j++)
+                {
+                    // 固定右边并且形成一个小区间
+                    for (int index = i; index < j + 1; index++)
+                    {
+                    }
+                }
+            }
+```
+
+```
+public static int numberOfSubarrays(int[] nums, int k) {
+        int len = nums.length;
+        if (len == 0) {
+            return 0;
+        }
+        for (int i = 0; i < len; i++) {
+            nums[i] = nums[i] % 2;
+        }
+        int countNumberOfSubarray = 0;
+        for (int r = 0; r < len; r++) {
+            //这里l得从0开始，count才能记录，也就说说数组必须是index0开的的数组，所以没记全
+            int count = 0;
+            for (int l = 0; l <= r; l++) {
+                count += nums[l];
+                if (count == k) {
+                    countNumberOfSubarray++;
+                }
+            }
+        }
+        System.out.println(countNumberOfSubarray);
+        return countNumberOfSubarray;
+    }
+```
 
 正确解法：利用前缀和。但是超时了
 
