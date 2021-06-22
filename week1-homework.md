@@ -402,6 +402,44 @@ class Solution {
         return ans;
     }
 ```
+### 2、最大子序和
+
+https://leetcode-cn.com/problems/maximum-subarray/submissions/
+
+```
+    /**
+    * 前缀和。找前缀和 与 最小值前缀和作差，作差即可。sr - sl = al+1 + al+2 + ...+ ar 。枚举（固定）有端点r, 要想s[r] - s[l]最大，则s[l]要足够小。
+    */
+    public int maxSubArray(int[] nums) {
+        if (nums.length == 1) {
+            return nums[0];
+        }
+        int[] sum = new int[nums.length + 1];
+        for (int i = 1; i <= nums.length; i++) {
+            sum[i] = sum[i - 1] + nums[i - 1];
+        }
+
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+        int minNumIndex = -1;
+        int maxNumIndex = -1;
+        // 计算最小前缀和
+        int[] minPrefixs = new int[nums.length + 1];
+        for (int i = 1; i <= nums.length; i++) {
+            // 比较、记录最小前缀和。
+            minPrefixs[i] = Math.min(minPrefixs[i - 1], sum[i]);
+        }
+        int ans = Integer.MIN_VALUE;
+        // 前缀和 - 最小前缀和。
+        for (int i = 1; i<= nums.length; i++) {
+           // 确保i在j之前，j <= i-1
+           ans = Math.max(ans, sum[i] - minPrefixs[i-1]);
+        }
+        return ans;
+    }
+```
+
+## 
 ## 四、二维前缀和
 
 ### 1、二维区域和检索 - 矩阵不可变
