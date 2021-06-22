@@ -275,7 +275,6 @@ https://leetcode-cn.com/problems/count-number-of-nice-subarrays/
 ```
 
 错误解法：原因是我们计算的数组，都是从最左边（即index=0）开始的。如果是index =1到index =3，之和也满足就记不到。如果完全暴力，好像得3重循环。。。
-
 ```
 public static int numberOfSubarrays(int[] nums, int k) {
         int len = nums.length;
@@ -300,6 +299,7 @@ public static int numberOfSubarrays(int[] nums, int k) {
         return countNumberOfSubarray;
     }
 ```
+
 正确暴力需要三重循环。
 
 ```
@@ -314,31 +314,6 @@ public static int numberOfSubarrays(int[] nums, int k) {
                     }
                 }
             }
-```
-
-```
-public static int numberOfSubarrays(int[] nums, int k) {
-        int len = nums.length;
-        if (len == 0) {
-            return 0;
-        }
-        for (int i = 0; i < len; i++) {
-            nums[i] = nums[i] % 2;
-        }
-        int countNumberOfSubarray = 0;
-        for (int r = 0; r < len; r++) {
-            //这里l得从0开始，count才能记录，也就说说数组必须是index0开的的数组，所以没记全
-            int count = 0;
-            for (int l = 0; l <= r; l++) {
-                count += nums[l];
-                if (count == k) {
-                    countNumberOfSubarray++;
-                }
-            }
-        }
-        System.out.println(countNumberOfSubarray);
-        return countNumberOfSubarray;
-    }
 ```
 
 正确解法：利用前缀和。但是超时了
