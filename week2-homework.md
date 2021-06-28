@@ -246,3 +246,117 @@ class Solution {
     
 }
 ```
+## 递归
+
+### 子集
+
+https://leetcode-cn.com/problems/subsets/
+
+```
+class Solution {
+
+    private List<List<Integer>> ansList = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+
+    public List<List<Integer>> subsets(int[] nums) {
+        findSubsets(nums, 0);
+        return ansList;
+    }
+
+    private void findSubsets(int[] nums, int index) {
+        if (index == nums.length) {
+            ansList.add(new ArrayList<>(list));
+            return;
+        }
+
+        list.add(nums[index]);
+
+        findSubsets(nums, index + 1);
+
+        // 如果使用成员变量，就需要还原现场
+        list.remove(list.size() - 1);
+
+        findSubsets(nums, index + 1);
+
+    }
+}
+```
+
+
+
+### 组合
+
+https://leetcode-cn.com/problems/combinations/submissions/
+
+```
+class Solution {
+
+    private List<List<Integer>> ansList = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+    private int targetLen = 0;
+    public List<List<Integer>> combine(int n, int k) {
+        targetLen = k;
+        int[] nums = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            nums[i] = i;
+        }
+        findCombine(nums, 1);
+        return ansList;
+    }
+
+    private void findCombine(int[] nums, int index) {
+        // 这里可以做优化，不够k和超过k的可以不继续往下走
+        if (index == nums.length) {
+            if (list.size() == targetLen) {
+                 ansList.add(new ArrayList<>(list));
+            }
+            return;
+        }
+
+        list.add(nums[index]);
+
+        findCombine(nums, index + 1);
+
+        // 如果使用成员变量，就需要还原现场
+        list.remove(list.size() - 1);
+
+        findCombine(nums, index + 1);
+    }
+}
+```
+
+
+
+### 全排列
+
+https://leetcode-cn.com/problems/permutations/submissions/
+
+```
+class Solution {
+
+    private List<List<Integer>> ansList = new ArrayList<>();
+    private List<Integer> list = new ArrayList<>();
+
+    public List<List<Integer>> permute(int[] nums) {
+        findPermute(nums, 0);
+        return ansList;
+    }
+
+    private void findPermute(int[] nums, int index) {
+        if (index == nums.length) {
+            ansList.add(new ArrayList<>(list));
+            return;
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            if (list.contains(nums[i])) {
+                continue;
+            }
+            list.add(nums[i]);
+            findPermute(nums, index + 1);
+            list.remove(list.size() - 1);
+        }
+    }
+}
+```
+
