@@ -72,3 +72,72 @@ class Solution {
     private Map<Integer, Integer> valIndexMap = new HashMap<>();
 }
 ```
+#### 2、[冗余连接](https://leetcode-cn.com/problems/redundant-connection/)
+
+https://leetcode-cn.com/problems/redundant-connection/
+
+```
+class Solution {
+
+    private int n;
+    private List<List<Integer>> edges;
+    private boolean[] visit;
+    private boolean hasCycle;
+
+    public int[] findRedundantConnection(int[][] input) {
+        //  因为n没有给，所以遍历数组中最大的值。该值就是n
+        n = 0;
+        for (int[] edge : input) {
+            int u = edge[0];
+            int v = edge[1];
+            n = Math.max(u, n);
+            n = Math.max(v, n);
+        }
+
+        // 初始化出边数组和访问数组
+        edges = new ArrayList<List<Integer>>();
+        visit = new boolean[n + 1];
+        for (int i = 0; i <= n; i++) {
+            edges.add(new ArrayList<Integer>());
+        }
+
+        //加边
+        for (int[] edge : input) {
+            int u = edge[0];
+            int v = edge[1];
+
+            //无向图所以双向加边
+            addEdge(u, v);
+            addEdge(v, u);
+
+            // 每加一条边，就判断是否有环。每加一条边，就要以该点位入口遍历全图。
+            for(int i = 0; i <= n; i++) visit[i] = false; // 因为遍历要多次遍历全图，visit是共享的，所以需要恢复状态。
+            dfs(u, -1);
+            if (hasCycle) return edge;
+        }
+        return new int[]{};
+    }
+
+    private void dfs(int x ,int fa) {
+        // 标记节点已经访问
+        visit[x] = true;
+
+        // 遍历所有出边
+        for (int y : edges.get(x)) {
+            if (y == fa) continue;
+            if (visit[y]){ // 判断是否为环： 不是父节点，且已经访问过，就是重复走，即就是环。
+                hasCycle = true;
+            } else {
+                dfs(y, x);
+            }
+        }
+    }
+
+    // 加边
+    private void addEdge(int x, int y) {
+        edges.get(x).add(y);
+    }
+}
+```
+
+
