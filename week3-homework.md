@@ -140,4 +140,79 @@ class Solution {
 }
 ```
 
+#### [课程表](https://leetcode-cn.com/problems/course-schedule/)
+
+https://leetcode-cn.com/problems/course-schedule/
+
+```
+/**
+ 解题思路：拓扑排序， BFS实现
+ 度：某个点入边的个数。即到某个点有几条边。
+ 要想执行某个点（上某一门课），它的入度必须为0，即它的入边都走过（前序课程都学过），每学过一门课程，其入度就减1。
+
+ */
+class Solution {
+
+    private List<List<Integer>> edges;
+    // 入度
+    private int[] inDeg;
+
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        // 初始化出边数组
+        edges = new ArrayList<List<Integer>>();
+        for (int i = 0; i < numCourses; i++) {
+            edges.add(new ArrayList<>());
+        }
+        // System.out.println("size：" + edges.size());
+
+        // 入度
+        inDeg = new int[numCourses];
+        for (int i = 0; i < numCourses; i++) {
+            inDeg[i] = 0;
+        }
+        
+
+        // 全局加边
+        for (int i = 0; i < prerequisites.length; i++) {
+            int u = prerequisites[i][0]; 
+            int v = prerequisites[i][1];
+            addEdge(v, u);
+        }
+        return learnCourse(numCourses) == numCourses;
+    }
+
+    public int learnCourse(int numCourses) {
+        int learnNum = 0;
+        Queue<Integer> queue = new ArrayDeque<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDeg[i] == 0){
+                queue.add(i);
+            }
+        }
+        // bfs
+        while (!queue.isEmpty()) {
+            int x = queue.poll();
+            learnNum++;
+            // System.out.println("edges x: " + x);
+            for(int y : edges.get(x)) {
+                // System.out.println("edges x -> y: " + y);
+                // 被取出来度减1
+                inDeg[y]--;
+                // 如果y的度为0， 就进队列，不为0就不进队列
+                if (inDeg[y] == 0) {
+                    queue.add(y);
+                }
+            }
+        }
+        // System.out.println("learnNum：" + learnNum);
+        return learnNum;
+    }
+
+    private void addEdge(int x, int y) {
+        edges.get(x).add(y);
+        inDeg[y]++; //度是到某个点，有几条边，所以是目的地的点+1
+    }
+}
+```
+
 
