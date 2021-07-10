@@ -291,5 +291,130 @@ class Solution {
 }
 ```
 
+#### [被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)
+
+https://leetcode-cn.com/problems/surrounded-regions/
+
+解法一：跑到55个case超时
+
+```
+class Solution {
+
+    /*
+    （1）bfs前，扫描全图，记录所有的O的位置
+    （2）bfs后，通过一个成员变量记录访问为O的位置
+    （3）看O是否全部都被记录到了
+    （4）没有全部被记录到，清空位置记录的数组，继续。
+     */
+    private int m;
+    private int n; 
+    private List<List<Character>> edges;
+    private Set<String> yes;
+    private Set<String> no;
+    private boolean[][] visit;
+    public void solve(char[][] board) {
+        m = board.length;
+        n = board[0].length;
+
+        edges = new ArrayList<List<Character>>();
+        for (int i = 0; i < m; i++) {
+             edges.add(new ArrayList<Character>());
+        }
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                edges.get(i).add(board[i][j]);
+            }
+        }
+        
+        bfs(board);
+    }
+
+    private void bfs(char[][] board) {
+
+        List<Node> surroundList = new ArrayList<>();
+        List<Node> oList = new ArrayList<>();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == 'O') {
+                    oList.add(new Node(i, j, 'O'));
+                }
+            }
+        }
+
+        yes = new HashSet<>();
+        no = new HashSet<>();
+        visit = new boolean[m + 1][n + 1];
+        for(Node curNode : oList) {
+            //System.out.println("curNode x: " + curNode.x + "curNode y: " + curNode.y + "curNode val: " + curNode.val);
+            if(!jugde(curNode.x, curNode.y)) continue;
+            if(yes.contains(curNode.x + "_" + curNode.y) || no.contains(curNode.x + "_" + curNode.y)) continue;
+            boolean surroundStatus = isSurrounded(curNode);
+            if (surroundStatus) {
+                for (String positionStr : yes) {
+                    String[] positions = positionStr.split("_");
+                    board[Integer.valueOf(positions[0])][Integer.valueOf(positions[1])] = 'X';
+                }
+            }
+        }
+    }
+
+    private boolean jugde(int x, int y){
+        return !(x == 0 || y == 0 || x == m - 1 || y == n - 1);
+    }
+
+    private boolean isSurrounded(Node curNode) {
+        //boolean[][] visit = new boolean[m + 1][n + 1];
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(curNode);
+        boolean status = true;
+        Set<String> tempSet = new HashSet<>();
+        while(!queue.isEmpty()) {
+            Node pollNode = queue.poll();
+            visit[pollNode.x][pollNode.y] = true;
+            tempSet.add(pollNode.x + "_" + pollNode.y);
+            //  上 下 左 右
+            int[] xDir = {0,  0, -1,  1};
+            int[] yDir = {1, -1,  0,  0};
+            int nextX = 0, nextY =0;
+            for (int i = 0; i < 4; i++) {
+                nextX = pollNode.x + xDir[i];
+                nextY = pollNode.y + yDir[i];
+                // 1、到达边界 (当前不为X，且到达边界)
+                if ((nextX < 0 || nextY < 0 || nextX > m - 1 || nextY > n - 1) && ('X' != pollNode.val)) {
+                    status = false;
+                    continue;
+                }
+                if ('O' == edges.get(nextX).get(nextY) && !visit[nextX][nextY]) {
+                    queue.add(new Node(nextX, nextY, 'O'));
+                }
+            }
+        
+        }
+        if (status) {
+            yes.addAll(tempSet);
+        } else {
+            no.addAll(tempSet);
+        }
+        return status;
+    }
+
+    private class Node {
+        public int x;
+        
+        public int y;
+
+        public Character val;
+
+        public Node(){}
+
+        public Node(int x, int y, Character val) {
+            this.x = x;
+            this.y = y;
+            this.val = val;
+        }
+    }
+}
+```
+
 
 
