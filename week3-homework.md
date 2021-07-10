@@ -214,5 +214,82 @@ class Solution {
     }
 }
 ```
+#### [课程表 II](https://leetcode-cn.com/problems/course-schedule-ii/)
+
+https://leetcode-cn.com/problems/course-schedule-ii/
+
+```
+class Solution {
+
+    private List<List<Integer>> edges;
+
+    private int[] inDeg;
+
+    private int n;
+
+    public int[] findOrder(int numCourses, int[][] prerequisites) {
+
+        n = numCourses;
+        // 初始化出边数组
+        edges = new ArrayList<List<Integer>>();
+        for (int i = 0; i < numCourses; i++) {
+            edges.add(new ArrayList<Integer>());
+        }
+
+        // 初始化入度数组
+        inDeg = new int[n];
+        for (int i= 0 ; i < n; i++) {
+            inDeg[i] = 0;
+        }
+
+        // 加边
+        for (int[] prerequisite : prerequisites) {
+            int u = prerequisite[0];
+            int v = prerequisite[1];
+            addEdge(v, u);
+        }
+
+        int[] learnList = learnCourse(numCourses);
+        if (learnList.length == numCourses) {
+            return learnList;
+        }
+        return new int[]{};
+    }
+
+    private int[] learnCourse(int numCourses) {
+        List<Integer> learnList = new ArrayList<>();
+        Queue<Integer> queue = new ArrayDeque<Integer>(); 
+        // 将所有入度为0的节点入队列
+        for (int i = 0; i < n; i++){
+            if(inDeg[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        // bfs
+        while (!queue.isEmpty()) {
+            int x = queue.poll();
+            learnList.add(x);
+            // 查找这个点的所有出边
+            for (int y : edges.get(x)) {
+                inDeg[y]--;
+                if (inDeg[y] == 0) {
+                    queue.add(y);
+                }
+            }
+        }
+
+        //return learnList.toArray(new Integer[0]); // 注意下这里List转数组，直接转是object类型，传入类型要转成Integer类型
+        return learnList.stream().mapToInt(Integer::valueOf).toArray(); // list转int数组
+    }
+
+
+    private void addEdge(int x, int y) {
+        edges.get(x).add(y);
+        inDeg[y]++;
+    }
+}
+```
+
 
 
